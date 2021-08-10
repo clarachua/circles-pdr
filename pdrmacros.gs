@@ -99,8 +99,6 @@ function dataval() {
 function CopySheetFolder() {
   var source = SpreadsheetApp.getActiveSpreadsheet();
   var stcopy = source.getSheetByName(DupSheet);
-
-  var parentFolder = DriveApp.getFolderById(folderId);
   var i = 0
   var j = 0
   //while(childFolders.hasNext()) {
@@ -147,9 +145,6 @@ function CopySheetFolder() {
 function CopySheetAll() {
   var source = SpreadsheetApp.getActiveSpreadsheet();
   var stcopy = source.getSheetByName(DupSheet);
-
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
 
@@ -466,8 +461,6 @@ function addPermission() {
 
 // protectTab removes all existing users who have permission to the sheet, and adds the users entered in the email Group (up to 3 users max)
 function protectTab() {
-  // var parentFolder = DriveApp.getFolderById(folderId);
-  // var childFolders = parentFolder.getFolders();
   var i = 0;
   var j = 0;
   Logger.log(sheetname);
@@ -544,8 +537,6 @@ function protectTab() {
 
 // removeProtect removes all editors from the protected tab (basically unprotects the sheet so all editors of the Spreadsheet can edit the tab)
 function removeProtect() {
-  // var parentFolder = DriveApp.getFolderById(folderId);
-  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
 
@@ -610,7 +601,6 @@ function CopyTab() {
 // CopyAllFolders will check copy all files in across 1 level of subfolders (i.e. Main Folder > Folders > File) if there are no subfolders, it will copy files across.
 
 function CopyAllFiles() {
-  // var parentFolder = DriveApp.getFolderById(folderId);
   var i = 0
   var j = 0
   //while(childFolders.hasNext()) {
@@ -663,8 +653,6 @@ function CopyAllFiles() {
 // CopyAllFolders will copy all files in across 1 level of subfolders (i.e. Main Folder > Folders > File) if there are no subfolders, it will copy files across.
 
 function CopyAllFolders() {
-  // var parentFolder = DriveApp.getFolderById(folderId);
-  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
 
@@ -867,8 +855,6 @@ function TrackAll() {
 
 
 function GetFolderId() {
-  // var parentFolder = DriveApp.getFolderById(folderId);
-  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
   while(childFolders.hasNext()) {
@@ -954,8 +940,6 @@ function clearTracker(sheet_name) {
 
 
 function checkSheetExists() {
-  // var parentFolder = DriveApp.getFolderById(folderId);
-  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
 
@@ -1048,8 +1032,6 @@ function test4() {
 
 function changeFormulas() {
   // Iterating through Folders
-  // var parentFolder = DriveApp.getFolderById(folderId);
-  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
   while(childFolders.hasNext()) {
@@ -1365,8 +1347,6 @@ function replaceInSheet(sheet, to_replace, replace_with) {
 function test3() {
   //var deleteSheet = trackTab;
   //var deleteSheet = Browser.inputBox("Name of sheet to delete (for all files)");
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
   if (childFolders.hasNext()) {
@@ -1381,8 +1361,6 @@ function test3() {
 function DeleteTab(deleteSheet) {
   //var deleteSheet = trackTab;
   var deleteSheet = Browser.inputBox("Name of sheet to delete (for all files)");
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
   if (childFolders.hasNext()) {
