@@ -610,7 +610,7 @@ function CopyTab() {
 // CopyAllFolders will check copy all files in across 1 level of subfolders (i.e. Main Folder > Folders > File) if there are no subfolders, it will copy files across.
 
 function CopyAllFiles() {
-  var parentFolder = DriveApp.getFolderById(folderId);
+  // var parentFolder = DriveApp.getFolderById(folderId);
   var i = 0
   var j = 0
   //while(childFolders.hasNext()) {
@@ -663,8 +663,8 @@ function CopyAllFiles() {
 // CopyAllFolders will copy all files in across 1 level of subfolders (i.e. Main Folder > Folders > File) if there are no subfolders, it will copy files across.
 
 function CopyAllFolders() {
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
+  // var parentFolder = DriveApp.getFolderById(folderId);
+  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
 
@@ -797,8 +797,6 @@ function TrackAll() {
   clearTracker(missingSheet);
   clearTracker(trackerSheet);
   // Main function
-  var parentFolder = DriveApp.getFolderById(trackerFolderId);
-  var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
   if (childFolders.hasNext()){
@@ -857,7 +855,7 @@ function TrackAll() {
         var destrange = dest.getRange(lastrow+1, 1, 1,length);
         destrange.setValues(missing);
         j++;
-        Logger.log(j, filename, fileId, "does not have a",trackTab, "sheet");
+        Logger.log(j, filename, fileId, "does not have a", trackTab, "sheet");
       }
     }
   }
@@ -869,8 +867,8 @@ function TrackAll() {
 
 
 function GetFolderId() {
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
+  // var parentFolder = DriveApp.getFolderById(folderId);
+  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
   while(childFolders.hasNext()) {
@@ -947,97 +945,6 @@ function Track2019() {
   }
 }
 
-
-
-/* THIS DOESN'T WORK
-function TrackAll2() {
-  // Clear previous content first
-  clearTracker(missingSheet);
-  clearTracker(trackerSheet);
-  // Main function
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
-  var i = 0
-  var j = 0
-  var values = [];
-  while(childFolders.hasNext()) {
-    var child = childFolders.next();
-    i++;
-    Logger.log(child.getName());
-    // Only uncomment the next portion if you need the subFolders from the childFolders
-    //getSubFolders(child);
-    var fileIter = child.getFiles();
-
-    while(fileIter.hasNext()){
-      var file = fileIter.next();
-      var filename = file.getName();
-      var fileId = file.getId();
-      //Logger.log(fileId);
-      var ss = SpreadsheetApp.openById(fileId);
-      SpreadsheetApp.setActiveSpreadsheet(ss);
-      if (ss.getSheetByName('PDR Form - Q2') != null) {
-        var source = ss.getSheetByName('PDR Form - Q2').activate();
-        var empid = source.getRange("A1").getValue();
-        var empname = source.getRange("F2").getValue();
-        var supname = source.getRange("F3").getValue();
-        var Culturerow = source.createTextFinder('CULTURAL ALIGNMENT RATING').findNext().getRow();
-        var OKRrow = source.createTextFinder('OKR SCORE').findNext().getRowIndex();
-        var Completerow = source.createTextFinder('I confirm that the PDR has been discussed and').findNext().getRowIndex();
-        //Logger.log(Culturerow, OKRrow, Completerow);
-        var empOKR = source.getRange('K'+OKRrow).getValue();
-        var supOKR = source.getRange('N'+OKRrow).getValue();
-        var empCult = source.getRange('K'+Culturerow).getValue();
-        var supCult = source.getRange('N'+Culturerow).getValue();
-        var empComp = source.getRange('K'+Completerow).getValue();
-        var supComp = source.getRange('N'+Completerow).getValue();
-        // Put all values into a 1 row array
-        var rowvalues = [fileId,empid, empname, supname, empCult, supCult, empOKR, supOKR, empComp, supComp];
-        values.push(rowvalues);
-        var length = values[0].length;
-        //var numrows = values.length;
-        //Logger.log(values);
-        // Define destination range, getting the last row + 1, starting with Col A, 1 row, and length of the values
-        // Set value from all the variables previously
-        var destrange = dest.getRange(lastrow+1, 1, numrows,length);
-        destrange.setValues(values);
-        j++;
-        return values;
-      }
-      else {
-        var missing = [[filename, fileId]]
-        var length = missing[0].length;
-        // Define destination sheet and last row
-        var dest = SpreadsheetApp.openById(trackerFile).getSheetByName(missingSheet);
-        var lastrow = dest.getLastRow();
-        Logger.log(filename, fileId, "has no PDR Form - Q2 sheet")
-        // Define destination range, getting the last row + 1, starting with Col A, 1 row, and length of the values
-        // Set value from all the variables previously
-        var destrange = dest.getRange(lastrow+1, 1, 1,length);
-        destrange.setValues(missing);
-        j++;
-        Logger.log(j, filename, fileId, "does not have a PDR Q2 sheet");
-      }
-      //
-      //  THIS PART DOESN'T WORK
-      // Define destination sheet and last row
-      var dest = SpreadsheetApp.openById(trackerFile).getSheetByName(trackerSheet);
-      var lastrow = dest.getLastRow();
-      var numrows = values.length;
-      //var length = values.length;
-      Logger.log(values, length, numrows);
-      //Logger.log(j, empid, empname, supname, empCult, supCult, empOKR, supOKR, empComp, supComp, lastrow, numrows, length)
-      // Define destination range, getting the last row + 1, starting with Col A, 1 row, and length of the values
-      // Set value from all the variables previously
-      var destrange = dest.getRange(lastrow+1, 1, numrows,length);
-      destrange.setValues(values);
-      //Logger.log(destrange, values);
-
-    }
-  }
-}
-*/
-
-
 function clearTracker(sheet_name) {
   var s1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheet_name);
   var lastrow = s1.getLastRow();
@@ -1047,8 +954,8 @@ function clearTracker(sheet_name) {
 
 
 function checkSheetExists() {
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
+  // var parentFolder = DriveApp.getFolderById(folderId);
+  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
 
@@ -1083,7 +990,6 @@ function checkSheetExists() {
         destrange.setValues(missing);
           }
           j++;
-//          Logger.log(newsheet.getName(), "has the checkboxes unticked");
         }
       }
     }
@@ -1098,34 +1004,6 @@ function checkSheetExists() {
   s1.insertRowsAfter(lastrow, 30);
 */
 
-/*
-  var source = SpreadsheetApp.openById("13CSAiPqEsC4_jV2JqvEuS-Ls2GoqTVuMs6f7X3ClFxg").getSheetByName('PDR Form - Q2');
-  var empid = source.getRange("A1").getValue();
-  var empname = source.getRange("F2").getValue();
-  var supname = source.getRange("F3").getValue();
-  var Culturerow = source.createTextFinder('CULTURAL ALIGNMENT RATING').findNext().getRow();
-  var OKRrow = source.createTextFinder('OKR SCORE').findNext().getRowIndex();
-  var Completerow = source.createTextFinder('I confirm that the PDR has been discussed and').findNext().getRowIndex();
-  Logger.log(Culturerow, OKRrow, Completerow);
-  var empOKR = source.getRange('K'+OKRrow).getValue();
-  var supOKR = source.getRange('N'+OKRrow).getValue();
-  var empCult = source.getRange('K'+Culturerow).getValue();
-  var supCult = source.getRange('N'+Culturerow).getValue();
-  var empComp = source.getRange('K'+Completerow).getValue();
-  var supComp = source.getRange('N'+Completerow).getValue();
-  // Put all values into a 1 row array
-  var values = [[empid, empname, supname, empCult, supCult, empOKR, supOKR, empComp, supComp]];
-  var length = values[0].length;
-  // Define destination sheet and last row
-  var dest = SpreadsheetApp.openById("1T8-6KEtfFBogTLevKWp2GPF4ERMp5KRMufOwdvOIn54").getSheetByName('TrackTest');
-  var lastrow = dest.getLastRow();
-  Logger.log(empid, empname, supname, empCult, supCult, empOKR, supOKR, empComp, supComp, lastrow, length)
-  // Define destination range, getting the last row + 1, starting with Col A, 1 row, and length of the values
-  // Set value from all the variables previously
-  var destrange = dest.getRange(lastrow+1, 1, 1,length);
-  destrange.setValues(values);
-  Logger.log(destrange, values);
-  */
 
 function test4() {
       //Logger.log(fileId);
@@ -1164,32 +1042,14 @@ function test4() {
           //}
         }
         Logger.log(v2);
-
-
-        /*
-        // This sets the formula to be the sum of the 6 rows above K13
-        empCultscore.setFormulaR1C1("=SUMPRODUCT(R[-6]C[0]:R[-1]C[0], R[-6]C[1]:R[-1]C[1])");
-        supCultscore.setFormulaR1C1("=SUMPRODUCT(R[-6]C[0]:R[-1]C[0], R[-6]C[1]:R[-1]C[1])");
-        empCultperc.setFormulaR1C1("=SUM(R[-6]C[0]:R[-1]C[0])");
-        supCultperc.setFormulaR1C1("=SUM(R[-6]C[0]:R[-1]C[0])");
-        //empOKRscore.setFormula(formula);
-        empOKRscore.setFormulaR1C1("=SUMPRODUCT(R[-"+OKRnumrows+"]C[0]:R[-1]C[0], R[-"+OKRnumrows+"]C[1]:R[-1]C[1])");
-        supOKRscore.setFormulaR1C1("=SUMPRODUCT(R[-"+OKRnumrows+"]C[0]:R[-1]C[0], R[-"+OKRnumrows+"]C[1]:R[-1]C[1])");
-        empOKRperc.setFormulaR1C1("=SUM(R[-"+OKRnumrows+"]C[0]:R[-1]C[0])");
-        supOKRperc.setFormulaR1C1("=SUM(R[-"+OKRnumrows+"]C[0]:R[-1]C[0])");
-        empCultperc.setNumberFormat('##%');
-        supCultperc.setNumberFormat('##%');
-        empOKRperc.setNumberFormat('##%');
-        supOKRperc.setNumberFormat('##%');
-        */
       }
 }
 
 
 function changeFormulas() {
   // Iterating through Folders
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
+  // var parentFolder = DriveApp.getFolderById(folderId);
+  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
   while(childFolders.hasNext()) {
@@ -1610,23 +1470,6 @@ function getSubFolders(parent) {
   return;
 }
 */
-
-  /*
-  var dApp = DriveApp;
-  var targetFolder = dApp.getFoldersByName(mainfolder);
-  Logger.log(mainfolder);
-  //var folderIter = targetFolder.getFolders();
-  //var folderIter = dApp.getFoldersByName(mainfolder);
-  //var folder = folderIter.next();
-  //var filesIter = folder.getFiles();
-
-  while(folderIter.hasNext()){
-    var folder = folderIter.next();
-    var foldername = folder.getName();
-    Logger.log(foldername);
-  }
-  */
-
 
 /*
 function LinkIter() {
