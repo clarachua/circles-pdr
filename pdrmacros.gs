@@ -1,8 +1,3 @@
-// TO DO
-// Make Delete Tab 2 levels
-// Protect key ranges (CulturalAlignmentRating, OKR Score, I confirm that... )
-// Do Folder Permissions
-// ChangeText - to set formula for OKR scores
 
 
 // Get macro variables
@@ -20,10 +15,7 @@ var rowMissingSheet = macrosheet.createTextFinder('Missing Sheet Name').findNext
 var rowTrackTab = macrosheet.createTextFinder('Tab to Track').findNext().getRowIndex();
 var rowSelEmail = macrosheet.createTextFinder('Add permission').findNext().getRowIndex();
 var rowEmailGroup = macrosheet.createTextFinder('Enter email 1').findNext().getRowIndex();
-var rowtext1 = macrosheet.createTextFinder('Original').findNext().getRowIndex() +1;
-var rowtext2 = macrosheet.createTextFinder('Original').findNext().getRowIndex() +2;
-var rowtext3 = macrosheet.createTextFinder('Original').findNext().getRowIndex() +3;
-var rowtext4 = macrosheet.createTextFinder('Original').findNext().getRowIndex() +4;
+var rowtextChange = macrosheet.createTextFinder('Original').findNext().getRowIndex() +1;
 var ddcopy = macrosheet.getRange("A33:A34").getValues();
 var ddname = macrosheet.getRange('A32').getValue();
 var colEefileid = infosheet.createTextFinder('FileId').findNext().getColumnIndex();
@@ -52,20 +44,20 @@ var emailGroup3 = [macrosheet.getRange('B'+rowEmailGroup).getValue(),
 var emailGroup2 = [macrosheet.getRange('B'+rowEmailGroup).getValue(),
                    macrosheet.getRange('B'+(rowEmailGroup+1)).getValue()]
 var emailGroup1 = [macrosheet.getRange('B'+rowEmailGroup).getValue()]
-var find1 = macrosheet.getRange('A'+rowtext1).getValue();
-var find2 = macrosheet.getRange('A'+rowtext2).getValue();
-var find3 = macrosheet.getRange('A'+rowtext3).getValue();
-var find4 = macrosheet.getRange('A'+rowtext4).getValue();
-var find5 = macrosheet.getRange('A'+(rowtext4+1)).getValue();
-var find6 = macrosheet.getRange('A'+(rowtext4+2)).getValue();
-var find7 = macrosheet.getRange('A'+(rowtext4+3)).getValue();
-var repl1 = macrosheet.getRange('B'+rowtext1).getValue();
-var repl2 = macrosheet.getRange('B'+rowtext2).getValue();
-var repl3 = macrosheet.getRange('B'+rowtext3).getValue();
-var repl4 = macrosheet.getRange('B'+rowtext4).getValue();
-var repl5 = macrosheet.getRange('B'+((rowtext4)+1)).getValue();
-var repl6 = macrosheet.getRange('B'+((rowtext4)+2)).getValue();
-var repl7 = macrosheet.getRange('B'+((rowtext4)+3)).getValue();
+var find1 = macrosheet.getRange('A'+rowtextChange).getValue();
+var find2 = macrosheet.getRange('A'+(rowtextChange+1)).getValue();
+var find3 = macrosheet.getRange('A'+(rowtextChange+2)).getValue();
+var find4 = macrosheet.getRange('A'+(rowtextChange+3)).getValue();
+var find5 = macrosheet.getRange('A'+(rowtextChange+4)).getValue();
+var find6 = macrosheet.getRange('A'+(rowtextChange+5)).getValue();
+var find7 = macrosheet.getRange('A'+(rowtextChange+6)).getValue();
+var repl1 = macrosheet.getRange('B'+rowtextChange).getValue();
+var repl2 = macrosheet.getRange('B'+(rowtextChange+1)).getValue();
+var repl3 = macrosheet.getRange('B'+(rowtextChange+2)).getValue();
+var repl4 = macrosheet.getRange('B'+(rowtextChange+3)).getValue();
+var repl5 = macrosheet.getRange('B'+(rowtextChange+4)).getValue();
+var repl6 = macrosheet.getRange('B'+(rowtextChange+5)).getValue();
+var repl7 = macrosheet.getRange('B'+(rowtextChange+6)).getValue();
 var parentFolder = DriveApp.getFolderById(folderId);
 var childFolders = parentFolder.getFolders();
   var i = 0;
@@ -73,11 +65,11 @@ var childFolders = parentFolder.getFolders();
 
 // Functions start here
 
-// CopyAllFolders, protectTab and changeText
+// CopyAllFolders, protectTab and changeFormulas
 function ready(){
   CopyAllFolders();
   protectTab();
-  changeText();
+  changeFormulas();
 }
 
 // Set Data Validation for new SQ4 template for specific fileId only
@@ -103,7 +95,6 @@ function dataval() {
 
 // CopySheetFolder will copy selected sheet ('dupsheet') to all files in 1 folder (i.e. no subfolders) and set data validation
 // CopySheetAll will copy selected sheet across 1 level of subfolders (i.e. Main Folder > Folders > File) if there are no subfolders, it will copy files across.
-
 
 function CopySheetFolder() {
   var source = SpreadsheetApp.getActiveSpreadsheet();
@@ -269,8 +260,9 @@ function createNamedRange() {
 }
 
 
-// Function to go down the spreadsheet, open the file by id, copy name from table to sheet2
-// If this works, do another function to get copy various ranges in the fileID and copy to tracker
+// Function to go down the spreadsheet, open the file by id, copy name from
+// table to sheet2 If this works, do another function to get copy various
+// ranges in the fileID and copy to tracker
 function tabletosheet() {
   // test on filtered open spreadsheet, print first name and last name
   var range = infosheet.getRange("A:AC");
@@ -290,7 +282,7 @@ function tabletosheet() {
 
       // var
       Logger.log(j + " Name:" + firstname + " " + lastname + " Mgr name: " + mgrname + " Job title: " + jobtitle + eefileid);
-      // do more stuff
+
       // Open fileId
       if (eefileid != "") {
         var ss = SpreadsheetApp.openById(eefileid);
@@ -311,7 +303,6 @@ function tabletosheet() {
       continue
     }
   }
-
 }
 
 // Rename Sheet
@@ -642,7 +633,7 @@ function CopyAllFiles() {
         var range1 = newsheet.getRange("H3");
         range1.clearContent();
         var rep =   SpreadsheetApp.getActiveSheet().createTextFinder('I confirm that the PDR').findNext().getValue();
-        replaceInSheet(newsheet, find1,repl1);
+        replaceInSheet(newsheet, find1, repl1);
         replaceInSheet(newsheet, find2, repl2);
         replaceInSheet(newsheet, find3, repl3);
         replaceInSheet(newsheet, rep, repl4);
