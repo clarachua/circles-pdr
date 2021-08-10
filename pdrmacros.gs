@@ -466,8 +466,8 @@ function addPermission() {
 
 // protectTab removes all existing users who have permission to the sheet, and adds the users entered in the email Group (up to 3 users max)
 function protectTab() {
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
+  // var parentFolder = DriveApp.getFolderById(folderId);
+  // var childFolders = parentFolder.getFolders();
   var i = 0;
   var j = 0;
   Logger.log(sheetname);
@@ -544,8 +544,8 @@ function protectTab() {
 
 // removeProtect removes all editors from the protected tab (basically unprotects the sheet so all editors of the Spreadsheet can edit the tab)
 function removeProtect() {
-  var parentFolder = DriveApp.getFolderById(folderId);
-  var childFolders = parentFolder.getFolders();
+  // var parentFolder = DriveApp.getFolderById(folderId);
+  // var childFolders = parentFolder.getFolders();
   var i = 0
   var j = 0
 
