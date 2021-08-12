@@ -1167,6 +1167,37 @@ var selEmail = macrosheet.getRange('B'+rowSelEmail).getValue();
   Logger.log(folderId, sheetname, trackerFile, trackerSheet, missingSheet, selEmail);
 }
 
+
+// Create array with folder IDs and folder names
+function FolderIdName() {
+  // Enter Cell with FolderIds
+  // Get SubFolder Names and SubFolder FolderIds
+  // Copy into Array - Subfolder Name, Subfolder ID
+  // Print Array to see that we have it correct
+  // Do other things
+
+  // Create empty array for folders
+  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  var rows = [];
+  rows.push(["ID", "Supervisor Name", "FolderId"]);
+    var parFolder = DriveApp.getFolderById("189C5vR9pNzY01GWLPyveETTvxRgUQquZ");
+  var childFolders = parFolder.getFolders();
+  var i = 0
+  while(childFolders.hasNext()) {
+    var child = childFolders.next();
+    if(child != null) {
+      rows.push([i, child.getId(), child.getName()]);
+    }
+    i++;
+    Logger.log("Row copied for" + child.getName());
+  }
+  // var range = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().setActiveSelection('G1:G');
+  // range.setValue(childId);
+  sheet.getRange(1,1,rows.length, 3).setValues(rows);
+}
+
+
+
 /*
 function GetFolderId() {
   var parentFolder = DriveApp.getFolderById(folderId);
