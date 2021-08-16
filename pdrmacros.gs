@@ -1190,15 +1190,15 @@ function fileMover(id, targetFolderId, originFolderId) {
   }
 }
 
+// To remove this once I have the function to iterate over rows
 var id = "1xip6DeD3U2U6Hzz4QMYuVvOjcKDrhPSW2cCSDy9s4oQ"; //Pooh PDR
 var targetFolderId = "1CNBQHcOIGOLshjoy_M1iWS_PjMhItyzJ"; // Test Archive
 var originFolderId = "189C5vR9pNzY01GWLPyveETTvxRgUQquZ"; // Test Folder
 
-
 // function to move Folders
 function fileMover2() {
 // get file and parent folder name
-  const file = DriveApp.getFileById(id);
+  var file = DriveApp.getFileById(id);
   var foldername = file.getParents().next().getName();
   Logger.log("Parent Folder is " + foldername);
 
@@ -1207,7 +1207,7 @@ function fileMover2() {
     var newFolderId = FolderExists(foldername, targetFolderId);
     var newFolder = DriveApp.getFolderById(newFolderId);
     file.moveTo(newFolder);
-    Logger.log("newfolderId is" + newFolderId + " & " + "file has been moved");
+    Logger.log("newfolderId is " + newFolderId + " & " + "file has been moved");
   // }
   // catch(e) {
   //   Logger.log("There is an exception: " + e);
@@ -1223,9 +1223,12 @@ function FolderExists(foldername, targetFolderId){
      } else {
        var folderfind = targetFolder.createFolder(foldername).getId();
      }
-  Logger.log("Return Folder:"+ folderfind);
+  Logger.log("Return Folder: "+ folderfind);
   return folderfind
 }
+
+
+
 
 /* ORIGINAL fileMover code
 function fileMover(id,targetFolderId,parentFolderId) {
@@ -1243,14 +1246,6 @@ function fileMover(id,targetFolderId,parentFolderId) {
 }
 */
 
-// Create array with folder IDs and folder names
-function FolderIdName() {
-  // Enter Cell with FolderIds
-  // Get SubFolder Names and SubFolder FolderIds
-  // Copy into Array - Subfolder Name, Subfolder ID
-  // Print Array to see that we have it correct
-  // Do other things
-
 // Var File Iteration code, to put in right place
   // var fileIter = child.getFiles();
   // while(fileIter.hasNext()){
@@ -1258,26 +1253,36 @@ function FolderIdName() {
   //   var filename = file.getName();
   //   var fileId = file.getId();
 
-  // Create empty array for folders
+
+// Get Folder IDs and folder names of specified ParentFolder
+function FolderIdName() {
+  // Enter Cell with FolderIds
+  // Get SubFolder Names and SubFolder FolderIds
+  // Copy into Array - Subfolder Name, Subfolder ID
+  // Print Array to see that we have it correct
+  // Do other things
+
+  // Create empty array for folders on Supervisor Folder sheet
   var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
   sheet.clear();
   var rows = [];
-  rows.push(["ID", "Supervisor Name", "FolderId"]);
-    var parFolder = DriveApp.getFolderById("189C5vR9pNzY01GWLPyveETTvxRgUQquZ");
+  rows.push(["ID", "Supervisor Name", "FolderId", "No. of Files"]);
+  var parFolder = DriveApp.getFolderById("1NWqsfoVvDaJZ5Vv46pR036BnB_6GxV7S");
   var childFolders = parFolder.getFolders();
-  var i = 0
-  while(childFolders.hasNext()) {
+  var i = 0;
+    while(childFolders.hasNext()) {
+    var j = 0;
     var child = childFolders.next();
-    var foldername = child.getName();
-    if(child != null) {
-      rows.push([i, child.getId(), child.getName()]);
-    }
+    var childFiles = child.getFiles();
+      while(childFiles.hasNext()) {
+        var file = childFiles.next();
+        j++
+      }
+    rows.push([i, child.getName(), child.getId(), j]);
     i++;
-    Logger.log("Row copied for" + child.getName());
+    Logger.log("Row copied for " + child.getName());
   }
-  // var range = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().setActiveSelection('G1:G');
-  // range.setValue(childId);
-  sheet.getRange(1,1,rows.length, 3).setValues(rows);
+  sheet.getRange(1,1,rows.length, rows[0].length).setValues(rows);
 }
 
 
