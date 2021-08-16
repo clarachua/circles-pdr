@@ -758,7 +758,7 @@ function TrackFiles() {
       // Set value from all the variables previously
       var destrange = dest.getRange(lastrow+1, 1, 1,length);
       destrange.setValues(values);
-      Logger.log(destrange, values, "has been tracked");
+      Logger.log(destrange + values + "has been tracked");
       j++;
     }
     else {
@@ -773,7 +773,7 @@ function TrackFiles() {
       var destrange = dest.getRange(lastrow+1, 1, 1,length);
       destrange.setValues(missing);
       j++;
-      Logger.log(j, filename, fileId, "does not have a",trackTab, "sheet");
+      Logger.log(j + filename + fileId + "does not have a" + trackTab + "sheet");
     }
   }
 }
@@ -828,7 +828,7 @@ function TrackAll() {
         // Set value from all the variables previously
         var destrange = dest.getRange(lastrow+1, 1, 1,length);
         destrange.setValues(values);
-        Logger.log(destrange, values, "has been tracked");
+        Logger.log(destrange + values + "has been tracked");
         j++;
       }
       else {
@@ -843,7 +843,7 @@ function TrackAll() {
         var destrange = dest.getRange(lastrow+1, 1, 1,length);
         destrange.setValues(missing);
         j++;
-        Logger.log(j, filename, fileId, "does not have a", trackTab, "sheet");
+        Logger.log(j + filename + fileId + "does not have a" + trackTab + "sheet");
       }
     }
   }
@@ -1092,10 +1092,10 @@ function changeFormulas() {
         // empCultweight.setNumberFormats(formats);
         // supCultweight.setNumberFormats(formats);
 
-        Logger.log(filename, fileId, "has been changed");
+        Logger.log(filename + fileId + "has been changed");
       }
       else {
-        Logger.log(filename, fileId, "does not have PDR Form - Q2");
+        Logger.log(filename + fileId + "does not have" + RenamedSheet);
       }
     }
    }
@@ -1167,6 +1167,81 @@ var selEmail = macrosheet.getRange('B'+rowSelEmail).getValue();
   Logger.log(folderId, sheetname, trackerFile, trackerSheet, missingSheet, selEmail);
 }
 
+// Function to move file from folder x to folder y
+
+function fileMover(id, targetFolderId, originFolderId) {
+  var id = "1xip6DeD3U2U6Hzz4QMYuVvOjcKDrhPSW2cCSDy9s4oQ"; //Pooh PDR
+  var targetFolderId = "1CNBQHcOIGOLshjoy_M1iWS_PjMhItyzJ"; // Test Archive
+  var originFolderId = "189C5vR9pNzY01GWLPyveETTvxRgUQquZ"; // Test Folder
+
+  const file = DriveApp.getFileById(id);
+  var test = file.getParents().next().getName();
+  Logger.log("test is " + test);
+  // file.getParents().next().removeFile(id);
+  try {
+    DriveApp.getFolderById(targetFolderId).addFile(file);
+  }
+  catch(e) {
+    const originFolder = DriveApp.getFolderById(originFolderId);
+    const newFolder = targetFolderId.createFolder(file.getParents().getName());
+    // const newFolder = targetFolderId.createFolder(file.getName() + " folder");
+    DriveApp.getFolderById(newFolder.getId()).addFile(file);
+    Logger.log("The new Folder is " + newFolder)
+  }
+}
+
+var id = "1xip6DeD3U2U6Hzz4QMYuVvOjcKDrhPSW2cCSDy9s4oQ"; //Pooh PDR
+var targetFolderId = "1CNBQHcOIGOLshjoy_M1iWS_PjMhItyzJ"; // Test Archive
+var originFolderId = "189C5vR9pNzY01GWLPyveETTvxRgUQquZ"; // Test Folder
+
+
+// function to move Folders
+function fileMover2() {
+// get file and parent folder name
+  const file = DriveApp.getFileById(id);
+  var foldername = file.getParents().next().getName();
+  Logger.log("Parent Folder is " + foldername);
+
+  // if foldername exists in the targetFolderId, move the file there
+  // try {
+    var newFolderId = FolderExists(foldername, targetFolderId);
+    var newFolder = DriveApp.getFolderById(newFolderId);
+    file.moveTo(newFolder);
+    Logger.log("newfolderId is" + newFolderId + " & " + "file has been moved");
+  // }
+  // catch(e) {
+  //   Logger.log("There is an exception: " + e);
+  // }
+}
+
+// Function to see if foldername exists in parent folder, if not create folder
+function FolderExists(foldername, targetFolderId){
+  var targetFolder = DriveApp.getFolderById(targetFolderId);
+  var folderfind = targetFolder.getFoldersByName(foldername);
+    if (folderfind.hasNext()){
+       var folderfind = folderfind.next().getId();
+     } else {
+       var folderfind = targetFolder.createFolder(foldername).getId();
+     }
+  Logger.log("Return Folder:"+ folderfind);
+  return folderfind
+}
+
+/* ORIGINAL fileMover code
+function fileMover(id,targetFolderId,parentFolderId) {
+
+  const file = DriveApp.getFileById(id)
+  file.getParents().next().removeFile(file);
+    try {
+      DriveApp.getFolderById(targetFolderId).addFile(file);}
+
+    catch(e){
+      const parentFolder=DriveApp.getFolderById(parentFolderId);
+      const newFolder=parentFolder.createFolder(file.getName() + " folder");
+      DriveApp.getFolderById(newFolder.getId()).addFile(file);
+    }
+}
+*/
 
 // Create array with folder IDs and folder names
 function FolderIdName() {
@@ -1176,8 +1251,16 @@ function FolderIdName() {
   // Print Array to see that we have it correct
   // Do other things
 
+// Var File Iteration code, to put in right place
+  // var fileIter = child.getFiles();
+  // while(fileIter.hasNext()){
+  //   var file = fileIter.next();
+  //   var filename = file.getName();
+  //   var fileId = file.getId();
+
   // Create empty array for folders
   var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  sheet.clear();
   var rows = [];
   rows.push(["ID", "Supervisor Name", "FolderId"]);
     var parFolder = DriveApp.getFolderById("189C5vR9pNzY01GWLPyveETTvxRgUQquZ");
@@ -1185,6 +1268,7 @@ function FolderIdName() {
   var i = 0
   while(childFolders.hasNext()) {
     var child = childFolders.next();
+    var foldername = child.getName();
     if(child != null) {
       rows.push([i, child.getId(), child.getName()]);
     }
@@ -1195,7 +1279,6 @@ function FolderIdName() {
   // range.setValue(childId);
   sheet.getRange(1,1,rows.length, 3).setValues(rows);
 }
-
 
 
 /*
