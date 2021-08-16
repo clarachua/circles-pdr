@@ -1227,25 +1227,6 @@ function FolderExists(foldername, targetFolderId){
   return folderfind
 }
 
-
-
-
-/* ORIGINAL fileMover code
-function fileMover(id,targetFolderId,parentFolderId) {
-
-  const file = DriveApp.getFileById(id)
-  file.getParents().next().removeFile(file);
-    try {
-      DriveApp.getFolderById(targetFolderId).addFile(file);}
-
-    catch(e){
-      const parentFolder=DriveApp.getFolderById(parentFolderId);
-      const newFolder=parentFolder.createFolder(file.getName() + " folder");
-      DriveApp.getFolderById(newFolder.getId()).addFile(file);
-    }
-}
-*/
-
 // Var File Iteration code, to put in right place
   // var fileIter = child.getFiles();
   // while(fileIter.hasNext()){
@@ -1253,20 +1234,17 @@ function fileMover(id,targetFolderId,parentFolderId) {
   //   var filename = file.getName();
   //   var fileId = file.getId();
 
-
-// Get Folder IDs and folder names of specified ParentFolder
+// Create array with folder IDs and folder names
 function FolderIdName() {
   // Enter Cell with FolderIds
   // Get SubFolder Names and SubFolder FolderIds
   // Copy into Array - Subfolder Name, Subfolder ID
-  // Print Array to see that we have it correct
-  // Do other things
 
-  // Create empty array for folders on Supervisor Folder sheet
+  // Create empty array for folders
   var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
   sheet.clear();
   var rows = [];
-  rows.push(["ID", "Supervisor Name", "FolderId", "No. of Files"]);
+  rows.push(["S/N", "Supervisor Name", "FolderId", "No. of Files"]);
   var parFolder = DriveApp.getFolderById("1NWqsfoVvDaJZ5Vv46pR036BnB_6GxV7S");
   var childFolders = parFolder.getFolders();
   var i = 0;
@@ -1278,10 +1256,14 @@ function FolderIdName() {
         var file = childFiles.next();
         j++
       }
+    // if(child != null) {
     rows.push([i, child.getName(), child.getId(), j]);
+    // }
     i++;
     Logger.log("Row copied for " + child.getName());
   }
+  // var range = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().setActiveSelection('G1:G');
+  // range.setValue(childId);
   sheet.getRange(1,1,rows.length, rows[0].length).setValues(rows);
 }
 
