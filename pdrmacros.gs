@@ -1234,13 +1234,37 @@ function FolderExists(foldername, targetFolderId){
   //   var filename = file.getName();
   //   var fileId = file.getId();
 
-// Create array with folder IDs and folder names
+// Create array with folder IDs and folder names under defined parentFolder
 function FolderIdName() {
   // Enter Cell with FolderIds
   // Get SubFolder Names and SubFolder FolderIds
   // Copy into Array - Subfolder Name, Subfolder ID
 
   // Create empty array for folders
+  var parentFolder = DriveApp.getFolderById(folderId);
+  var childFolders = parentFolder.getFolders();
+  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  sheet.clear();
+  var rows = [];
+  rows.push(["S/N", "Supervisor Name", "FolderId", "No. of Files", "File Name", "FileId"]);
+  var i = 1;
+  // if (childFolders.hasNext()) {
+    while(childFolders.hasNext()) {
+      var j = 0;
+      var child = childFolders.next();
+      var fileIter = child.getFiles();
+        while(fileIter.hasNext()) {
+          var file = fileIter.next();
+          j++;
+          rows.push([i, child.getName(), child.getId(), j, file.getName(), file.getId()]);
+        }
+      i++;
+      Logger.log("Row copied for " + child.getName());
+    }
+  sheet.getRange(1,1,rows.length, rows[0].length).setValues(rows);
+}
+
+/* Old version of FolderIdName()
   var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
   sheet.clear();
   var rows = [];
@@ -1266,7 +1290,7 @@ function FolderIdName() {
   // range.setValue(childId);
   sheet.getRange(1,1,rows.length, rows[0].length).setValues(rows);
 }
-
+*/
 
 /*
 function GetFolderId() {
