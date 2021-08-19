@@ -1264,6 +1264,76 @@ function FolderIdName() {
   sheet.getRange(1,1,rows.length, rows[0].length).setValues(rows);
 }
 
+// Get current supervisor folder name of fileid by index match
+function indexMatch2() {
+  var basesheet = SpreadsheetApp.getActive().getSheetByName("For Merge");
+  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  var found = [];
+  var searchData = basesheet.getDataRange().getValues();
+  var findData = sheet.getDataRange().getValues();
+
+  for (i=0; i < findData.length; i++) {
+    var find = findData[i][5];
+    var searchref = basesheet.createTextFinder(find).findNext();
+    if (searchref !=null) {
+      var searchrefrow = searchref.getRowIndex()
+      var searchvalue = basesheet.getRange(searchrefrow, 9).getValue();
+    }
+    else {
+      var searchvalue = "NA";
+    }
+  found.push([searchvalue]);
+  }
+
+  Logger.log(" FL=" + found.length + " FL[0]= " + found[0].length)
+  sheet.getRange(1, 7, found.length, 1).setValues(found)
+}
+
+
+// Get current supervisor folder name of fileid by index match
+function indexMatch() {
+  var basesheet = SpreadsheetApp.getActive().getSheetByName("For Merge");
+  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  var found = [];
+  // found.push(["Current Sup"])
+  var searchData = basesheet.getDataRange().getValues();
+  var findData = sheet.getDataRange().getValues();
+
+  for (i = 0; i < findData.length; i++) {
+    for (j = 0; j < searchData.length; j++) {
+
+      var find = findData[i][5];
+      var searchref = searchData[j][19];
+      if (searchData.indexOf(find) === -1) {
+        found.push(["NA"]);
+      }
+      if (find = searchref && find != "") {
+        found.push([searchData[j][8]]);
+      }
+
+/*
+      if (find == searchref && find != "" ) {
+      // if (find == searchref) {
+        found[[i]] = [searchData[j][8]]
+        // found.push([searchData[j][8]])
+        // found.push([searchData[j][8]])
+        // found.push([0][i] = searchData[j][8]
+      }
+*/
+      // else {
+      //   found[[i]] = ["NA"];
+      //   // found.push(["NA"])
+      // }
+    }
+  }
+  found_array = [found];
+  Logger.log(i + " Found length is " + found.length + "; Found[0].length is " + found[0].length);
+  Logger.log(found);
+  Logger.log(i + " Foundarr length is " + found_array.length + "; Foundarr[0].length is " + found_array[0].length);
+  // Logger.log(found_array);
+  // sheet.getRange(1, 7, found.length, 1).setValues(found)
+}
+
 /* Old version of FolderIdName()
   var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
   sheet.clear();
