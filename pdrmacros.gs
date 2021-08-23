@@ -16,6 +16,8 @@ var rowTrackTab = macrosheet.createTextFinder('Tab to Track').findNext().getRowI
 var rowSelEmail = macrosheet.createTextFinder('Add permission').findNext().getRowIndex();
 var rowEmailGroup = macrosheet.createTextFinder('Enter email 1').findNext().getRowIndex();
 var rowtextChange = macrosheet.createTextFinder('Original').findNext().getRowIndex() +1;
+var rowSupsheet = macrosheet.createTextFinder('Supervisor Sheet Name').findNext().getRowIndex();
+var rowArchiveFolder = macrosheet.createTextFinder('Archive FolderId').findNext().getRowIndex();
 var ddcopy = macrosheet.getRange("A33:A34").getValues();
 var ddname = macrosheet.getRange('A32').getValue();
 var colEefileid = infosheet.createTextFinder('FileId').findNext().getColumnIndex();
@@ -36,6 +38,8 @@ var trackerFile = macrosheet.getRange('B'+rowTrackerFile).getValue();
 var trackerSheet = macrosheet.getRange('B'+rowTrackerSheet).getValue();
 var missingSheet = macrosheet.getRange('B'+rowMissingSheet).getValue();
 var trackTab = macrosheet.getRange('B'+rowTrackTab).getValue();
+var Supsheet = macrosheet.getRange('B'+rowSupsheet).getValue();
+var archiveFolder = macrosheet.getRange('B'+rowArchiveFolder).getValue();
 var selEmail = macrosheet.getRange('B'+rowSelEmail).getValue();
 var numEmails = macrosheet.getRange('B'+(rowEmailGroup-1)).getValue();
 var emailGroup3 = [macrosheet.getRange('B'+rowEmailGroup).getValue(),
@@ -1167,51 +1171,13 @@ var selEmail = macrosheet.getRange('B'+rowSelEmail).getValue();
   Logger.log(folderId, sheetname, trackerFile, trackerSheet, missingSheet, selEmail);
 }
 
-// Function to move file from folder x to folder y
-
-function fileMover(id, targetFolderId, originFolderId) {
-  var id = "1xip6DeD3U2U6Hzz4QMYuVvOjcKDrhPSW2cCSDy9s4oQ"; //Pooh PDR
-  var targetFolderId = "1CNBQHcOIGOLshjoy_M1iWS_PjMhItyzJ"; // Test Archive
-  var originFolderId = "189C5vR9pNzY01GWLPyveETTvxRgUQquZ"; // Test Folder
-
-  const file = DriveApp.getFileById(id);
-  var test = file.getParents().next().getName();
-  Logger.log("test is " + test);
-  // file.getParents().next().removeFile(id);
-  try {
-    DriveApp.getFolderById(targetFolderId).addFile(file);
-  }
-  catch(e) {
-    const originFolder = DriveApp.getFolderById(originFolderId);
-    const newFolder = targetFolderId.createFolder(file.getParents().getName());
-    // const newFolder = targetFolderId.createFolder(file.getName() + " folder");
-    DriveApp.getFolderById(newFolder.getId()).addFile(file);
-    Logger.log("The new Folder is " + newFolder)
-  }
-}
-
-// To remove this once I have the function to iterate over rows
-var id = "1xip6DeD3U2U6Hzz4QMYuVvOjcKDrhPSW2cCSDy9s4oQ"; //Pooh PDR
-var targetFolderId = "1CNBQHcOIGOLshjoy_M1iWS_PjMhItyzJ"; // Test Archive
-var originFolderId = "189C5vR9pNzY01GWLPyveETTvxRgUQquZ"; // Test Folder
-
-// function to move Folders
-function fileMover2() {
-// get file and parent folder name
+// Function to move file (id) to supervisor name (foldername) in parentfolder (targetFolderId)
+function fileMover(id, foldername, targetFolderId) {
   var file = DriveApp.getFileById(id);
-  var foldername = file.getParents().next().getName();
-  Logger.log("Parent Folder is " + foldername);
-
-  // if foldername exists in the targetFolderId, move the file there
-  // try {
-    var newFolderId = FolderExists(foldername, targetFolderId);
-    var newFolder = DriveApp.getFolderById(newFolderId);
-    file.moveTo(newFolder);
-    Logger.log("newfolderId is " + newFolderId + " & " + "file has been moved");
-  // }
-  // catch(e) {
-  //   Logger.log("There is an exception: " + e);
-  // }
+  var newFolderId = FolderExists(foldername, targetFolderId);
+  var newFolder = DriveApp.getFolderById(newFolderId);
+  file.moveTo(newFolder);
+  Logger.log("id is " + id + ", foldername is " + foldername + ", newfolderId is " + newFolderId + " & " + "file has been moved");
 }
 
 // Function to see if foldername exists in parent folder, if not create folder
@@ -1225,6 +1191,47 @@ function FolderExists(foldername, targetFolderId){
      }
   Logger.log("Return Folder: "+ folderfind);
   return folderfind
+}
+
+// Iterate down sheet and move files from Old Supervisor to New Supervisor
+function movefiles() {
+  // Go down spreadsheet Test
+  var sheet = SpreadsheetApp.getActive().getSheetByName(Supsheet);
+  var range = sheet.getDataRange().getValues();
+  // var range = sheet.getRange("A:G");
+  // var nRows = range.getLastRow();
+  var fileidcol = sheet.createTextFinder('FileId').findNext().getColumnIndex();
+  var archiveFolderId = archiveFolder; // Test Archive
+  var currentFolderId = folderId; // Test Folder
+
+// If Supervisor Name = Reporting to, do nothing
+// If Reporting to = NA, move to Archive
+// Else do fileMover2
+
+  for (var j = 1; j < range.length; j++) {
+    var row = j+1
+    if (sheet.isRowHiddenByFilter(row) != true) {
+      var curr_sup = sheet.getRange(row, 2).getValue();
+      var new_sup = sheet.getRange(row, 7).getValue();
+      var new_sup_email = sheet.getRange(row, 8).getValue();
+      // do stuff
+      if (new_sup == "NA") {
+        var id = sheet.getRange(row, fileidcol).getValue();
+        fileMover(id, curr_sup, archiveFolderId);
+        // fileMover2Archive(id, archiveFolderId);
+        Logger.log(j + " Fileid:" + id + ", currsup: NA, archiveFolderId:" + archiveFolderId);
+      }
+      else if (new_sup != curr_sup) {
+        var id = sheet.getRange(row, fileidcol).getValue();
+        fileMover(id, new_sup, currentFolderId);
+        var file = SpreadsheetApp.openById(id);
+        file.addEditor(new_sup_email);
+        Logger.log(j + " Fileid:" + id + " , currsup:" + curr_sup + ", newsup:" + new_sup + ", email:" + new_sup_email
+        + ", currentfolderid:" + currentFolderId);
+      }
+      // Logger.log(j + " Fileid:" + id + " , currsup:" + curr_sup + ", newsup:" + new_sup + ", email:" + new_sup_email);
+    }
+  }
 }
 
 // Var File Iteration code, to put in right place
@@ -1243,7 +1250,7 @@ function FolderIdName() {
   // Create empty array for folders
   var parentFolder = DriveApp.getFolderById(folderId);
   var childFolders = parentFolder.getFolders();
-  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  var sheet = SpreadsheetApp.getActive().getSheetByName(Supsheet);
   sheet.clear();
   var rows = [];
   rows.push(["S/N", "Supervisor Name", "FolderId", "No. of Files", "File Name", "FileId"]);
@@ -1266,9 +1273,10 @@ function FolderIdName() {
 
 // Get current supervisor folder name of fileid by index match
 function indexMatch2() {
-  var basesheet = SpreadsheetApp.getActive().getSheetByName("For Merge");
-  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  var basesheet = infosheet;
+  var sheet = SpreadsheetApp.getActive().getSheetByName(Supsheet);
   var found = [];
+  var found2 = [];
   var searchData = basesheet.getDataRange().getValues();
   var findData = sheet.getDataRange().getValues();
 
@@ -1278,16 +1286,20 @@ function indexMatch2() {
     if (searchref !=null) {
       var searchrefrow = searchref.getRowIndex()
       var searchvalue = basesheet.getRange(searchrefrow, 9).getValue();
+      var searchvalue2 = basesheet.getRange(searchrefrow, 10).getValue();
     }
     else {
       var searchvalue = "NA";
+      var searchvalue2 = "NA";
     }
   found.push([searchvalue]);
+  found2.push([searchvalue2]);
   }
 
   Logger.log(" FL=" + found.length + " FL[0]= " + found[0].length);
   Logger.log(found);
   sheet.getRange(1, 7, found.length, 1).setValues(found);
+  sheet.getRange(1, 8, found2.length, 1).setValues(found2);
 }
 
 
@@ -1318,6 +1330,22 @@ function indexMatch3() {
   Logger.log("S1: " + search1 + ", S2: " + search2 + ", S3: " + search3 + ", S4: " + search4);
 }
 
+
+function indexMatch4() {
+  var basesheet = SpreadsheetApp.getActive().getSheetByName("For Merge");
+  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  var found = [];
+  var search = basesheet.getDataRange().getValues();
+  var find = sheet.getRange(1, 6, sheet.getLastRow()).getValues().flat().filter(e => e);
+  for (j = 0; j < search.length; j++) {
+    if(~find.indexOf(search[j][18]))found.push([search[j][8]]);
+  }
+  // Logger.log(i + " Found length is " + found.length);
+  // Logger.log(found);
+  sheet.getRange(1, 7, found.length, 1).setValues(found)
+}
+
+
 // Get current supervisor folder name of fileid by index match
 function indexMatch() {
   var basesheet = SpreadsheetApp.getActive().getSheetByName("For Merge");
@@ -1334,7 +1362,7 @@ function indexMatch() {
       var find = findData[i][5];
       var searchref = searchData[j][19];
       if (find == searchref && find != "") {
-        found[[i]] = [searchData[j][8]];
+        found[i] = [searchData[j][8]];
         // found.push([searchData[j][8]]);
         // break;
       }
