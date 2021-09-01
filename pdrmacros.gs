@@ -413,7 +413,25 @@ function newTracker() {
   }
 }
 
+// Function to go down the spreadsheet, add permission to folders for supervisors
+function folderPermission() {
+  var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
+  // test on filtered open spreadsheet, print first name and last name
+  var range = sheet.getDataRange();
+  var nRows = range.getLastRow();
+  var fileidcol = sheet.createTextFinder('FolderId').findNext().getColumnIndex();
+  var supemailcol = sheet.createTextFinder('Supervisor email').findNext().getColumnIndex();
 
+  for (var j = 1; j < nRows; j++) {
+    var row = j+1
+      var folderid = sheet.getRange(row, fileidcol).getValue();
+      var supemail = sheet.getRange(row, supemailcol).getValue();
+      Logger.log(j + " Folderid: " + folderid + ", sup email: " + supemail + ", nrows = " + nRows);
+      var folder = DriveApp.getFolderById(folderid);
+      folder.addEditor(supemail);
+      Logger.log(j + ", " + supemail + " added to " + folderid);
+  }
+}
 
 //addPermission only adds permission to the protected sheet for 1 user and does not remove protection for any existing user
 function addPermission() {
@@ -1393,7 +1411,8 @@ function indexMatch() {
       //   // found.push(["NA"])
       // }
 
-/* Old version of FolderIdName()
+// Old version of FolderIdName()
+function FolderIdNameOld() {
   var sheet = SpreadsheetApp.getActive().getSheetByName("Test");
   sheet.clear();
   var rows = [];
@@ -1419,7 +1438,7 @@ function indexMatch() {
   // range.setValue(childId);
   sheet.getRange(1,1,rows.length, rows[0].length).setValues(rows);
 }
-*/
+
 
 /*
 function GetFolderId() {
