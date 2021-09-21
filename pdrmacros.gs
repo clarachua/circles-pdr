@@ -1,5 +1,4 @@
 
-
 // Get macro variables
 var macrosheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Macro Page');
 var infosheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('For Merge');
@@ -20,7 +19,7 @@ var rowSupsheet = macrosheet.createTextFinder('Supervisor Sheet Name').findNext(
 var rowArchiveFolder = macrosheet.createTextFinder('Archive FolderId').findNext().getRowIndex();
 var ddcopy = macrosheet.getRange("A33:A34").getValues();
 var ddname = macrosheet.getRange('A32').getValue();
-var colEefileid = infosheet.createTextFinder('FileId').findNext().getColumnIndex();
+var colEefileid = infosheet.createTextFinder('New_FileId').findNext().getColumnIndex();
 var colFirstname = infosheet.createTextFinder('First Name').findNext().getColumnIndex();
 var colLastname = infosheet.createTextFinder('Last Name').findNext().getColumnIndex();
 var colJobtitle = infosheet.createTextFinder('Job Title').findNext().getColumnIndex();
@@ -1291,7 +1290,8 @@ function FolderIdName() {
 
 // Get current supervisor folder name of fileid by index match
 function indexMatch2() {
-  var basesheet = infosheet;
+  // var basesheet = infosheet;
+  var basesheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Reminders');
   var sheet = SpreadsheetApp.getActive().getSheetByName(Supsheet);
   var found = [];
   var found2 = [];
