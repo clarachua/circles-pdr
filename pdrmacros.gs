@@ -1116,6 +1116,7 @@ function changeFormulas() {
         // supCultweight.setNumberFormats(formats);
 
         Logger.log(filename + fileId + "has been changed");
+
       }
       else {
         Logger.log(filename + fileId + "does not have" + RenamedSheet);
@@ -1167,7 +1168,7 @@ function changeText() {
         titleOKR.setValue('Q2 UPDATE');
 }
 */
-
+var id = sheet.getRange(row, fileidcol).getValue();
 function test() {
   var sheet_name = 'TrackTest';
   var s1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheet_name);
@@ -1243,7 +1244,6 @@ function movefiles() {
         Logger.log(j + " Fileid:" + id + ", currsup: NA, archiveFolderId:" + archiveFolderId);
       }
       else if (new_sup != curr_sup) {
-        var id = sheet.getRange(row, fileidcol).getValue();
         fileMover(id, new_sup, currentFolderId);
         var file = SpreadsheetApp.openById(id);
         file.addEditor(new_sup_email);
@@ -1585,6 +1585,46 @@ function DeleteTab(deleteSheet) {
     }
   }
 }
+
+// Function to delete range of cells
+function deleteSelectedRange() {
+  var i = 0
+  var j = 0
+
+  if (childFolders.hasNext()) {
+    while(childFolders.hasNext()) {
+      var child = childFolders.next();
+      i++;
+      Logger.log(i + ". " + child.getName());
+      // Only uncomment the next portion if you need the subFolders from the childFolders
+      // you will need to do a SubFolder.Iter and then a fileIter on the SubFolders
+      //getSubFolders(child);
+      var fileIter = child.getFiles();
+
+      while(fileIter.hasNext()){
+        var file = fileIter.next();
+        j++;
+        // var filename = file.getName();
+        var fileId = file.getId();
+        var ss = SpreadsheetApp.openById(fileId);
+        SpreadsheetApp.setActiveSpreadsheet(ss);
+        var itt = ss.getSheetByName(RenamedSheet);
+        var findtext = itt.createTextFinder("What can Circles.Life do to make you").findNext();
+        if (findtext != null) {
+          var rowForDeletion = findtext.getRowIndex();
+          var range = itt.getRange(rowForDeletion, 5, 4, 3);
+          range.clear()
+          Logger.log(j + " - " + fileId + " has text deleted.");
+        }
+        else {
+          Logger.log(j + " - " + fileId + " does not have the text.")
+        }
+      }
+    }
+  }
+
+}
+
 
 /*
 function ProtectSheet() {
