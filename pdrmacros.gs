@@ -17,6 +17,7 @@ var rowEmailGroup = macrosheet.createTextFinder('Enter email 1').findNext().getR
 var rowtextChange = macrosheet.createTextFinder('Original').findNext().getRowIndex() +1;
 var rowSupsheet = macrosheet.createTextFinder('Supervisor Sheet Name').findNext().getRowIndex();
 var rowArchiveFolder = macrosheet.createTextFinder('Archive FolderId').findNext().getRowIndex();
+var rowSupRefSheet = macrosheet.createTextFinder('Reference Supervisors Sheet').findNext().getRowIndex();
 var ddcopy = macrosheet.getRange("A33:A34").getValues();
 var ddname = macrosheet.getRange('A32').getValue();
 var colEefileid = infosheet.createTextFinder('New_FileId').findNext().getColumnIndex();
@@ -38,6 +39,7 @@ var trackerSheet = macrosheet.getRange('B'+rowTrackerSheet).getValue();
 var missingSheet = macrosheet.getRange('B'+rowMissingSheet).getValue();
 var trackTab = macrosheet.getRange('B'+rowTrackTab).getValue();
 var Supsheet = macrosheet.getRange('B'+rowSupsheet).getValue();
+var refSupsheet = macrosheet.getRange('B'+rowSupRefSheet).getValue();
 var archiveFolder = macrosheet.getRange('B'+rowArchiveFolder).getValue();
 var selEmail = macrosheet.getRange('B'+rowSelEmail).getValue();
 var numEmails = macrosheet.getRange('B'+(rowEmailGroup-1)).getValue();
@@ -1127,7 +1129,7 @@ function changeFormulas() {
 
 function addFolderPerms() {
   // Open supervisor folder, get data range
-  var s1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Supervisor Folders').activate();
+  var s1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(Supsheet).activate();
   var data = s1.getDataRange();
   var values = data.getValues();
   var lastrow = data.getLastRow();
@@ -1143,9 +1145,11 @@ function addFolderPerms() {
     var fid = values[i][folderIdcol];
     var supemail = values[i][supemailcol];
     var ff = DriveApp.getFolderById(fid);
-    ff.addEditor(supemail)
-    Logger.log(supemail, "has been added to", fid);
+    if (supemail != "NA") {
+      ff.addEditor(supemail)
+      Logger.log(supemail + "has been added to" + fid);
       }
+    }
 }
 
 /* Portion of code to change text by defining range and set the text values
@@ -1291,7 +1295,7 @@ function FolderIdName() {
 // Get current supervisor folder name of fileid by index match
 function indexMatch2() {
   // var basesheet = infosheet;
-  var basesheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Reminders');
+  var basesheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(refSupsheet);
   var sheet = SpreadsheetApp.getActive().getSheetByName(Supsheet);
   var found = [];
   var found2 = [];
