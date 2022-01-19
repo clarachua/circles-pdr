@@ -13,6 +13,7 @@ This project provides Google App Scripts for a company's Performance Management 
 - [ ] Dashboard of completion status over time
   - [ ] Capture daily completion status for all departments
   - [ ] Create dashboard status
+- [ ] Modularize find and replace text as a separate function that can be called separately
 - [ ] Macro to send emails to supervisors
 - [ ] Debug ready()
 - [ ] Check protectTab works before CopyAllFolders, changeFormulas
