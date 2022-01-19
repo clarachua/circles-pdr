@@ -1116,7 +1116,6 @@ function changeFormulas() {
         // supCultweight.setNumberFormats(formats);
 
         Logger.log(filename + fileId + "has been changed");
-
       }
       else {
         Logger.log(filename + fileId + "does not have" + RenamedSheet);
@@ -1168,7 +1167,7 @@ function changeText() {
         titleOKR.setValue('Q2 UPDATE');
 }
 */
-var id = sheet.getRange(row, fileidcol).getValue();
+
 function test() {
   var sheet_name = 'TrackTest';
   var s1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheet_name);
@@ -1244,6 +1243,7 @@ function movefiles() {
         Logger.log(j + " Fileid:" + id + ", currsup: NA, archiveFolderId:" + archiveFolderId);
       }
       else if (new_sup != curr_sup) {
+        var id = sheet.getRange(row, fileidcol).getValue();
         fileMover(id, new_sup, currentFolderId);
         var file = SpreadsheetApp.openById(id);
         file.addEditor(new_sup_email);
@@ -1624,6 +1624,49 @@ function deleteSelectedRange() {
   }
 
 }
+
+
+function TextChanger() {
+  var i = 0
+  var j = 0
+
+  if (childFolders.hasNext()) {
+    while(childFolders.hasNext()) {
+      var child = childFolders.next();
+      i++;
+      Logger.log(child.getName());
+      var fileIter = child.getFiles();
+
+      while(fileIter.hasNext()){
+        var file = fileIter.next();
+        var filename = file.getName();
+        var fileId = file.getId();
+        var ss = SpreadsheetApp.openById(fileId);
+        SpreadsheetApp.setActiveSpreadsheet(ss)
+        var itt = ss.getSheetByName(RenamedSheet);
+        if (itt != null) {
+          itt.activate();
+          var rep =   SpreadsheetApp.getActiveSheet().createTextFinder('I confirm that the PDR').findNext().getValue();
+          // replaceInSheet(newsheet, find1,repl1);
+          // replaceInSheet(newsheet, find2, repl2);
+          // replaceInSheet(newsheet, find3, repl3);
+          replaceInSheet(itt, rep, repl4);
+          // replaceInSheet(newsheet, find5, repl5);
+          // replaceInSheet(newsheet, find6, repl6);
+          // replaceInSheet(newsheet, find7, repl7);
+          j++;
+          Logger.log(j + " " + fileId + " has text replaced")
+        }
+        else {
+          j++;
+          Logger.log(j + " " + fileId + " does not have the sheet")
+        }
+      }
+    }
+  }
+}
+
+
 
 
 /*
